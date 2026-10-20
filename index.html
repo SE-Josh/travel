@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d0d0d"><title>TRAVELS</title><style>
+:root{color-scheme:dark}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#0d0d0d;color:#ededed;font-family:Arial,Helvetica,sans-serif}body{min-height:100svh}button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}button:focus-visible,.album:focus-visible{outline:1px solid white;outline-offset:5px}header{height:90px;padding:0 clamp(22px,5vw,70px);display:flex;align-items:center;justify-content:space-between}header .brand{font-size:12px;letter-spacing:.16em;font-weight:500}#back{font-size:12px;letter-spacing:.06em;color:#999;visibility:hidden}#back:hover{color:white}main{min-height:calc(100svh - 140px)}.albums{width:min(1040px,calc(100% - 44px));margin:clamp(42px,10vh,100px) auto 80px}.section-label{font-size:11px;letter-spacing:.17em;color:#777;margin:0 0 34px}.album-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(22px,4vw,52px)}.album{display:block;text-align:left;padding:0;width:100%}.album img{display:block;width:100%;aspect-ratio:1;object-fit:cover;background:#191919;transition:opacity .3s ease}.album:hover img{opacity:.78}.album-meta{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:17px}.album-title{font-size:14px;letter-spacing:.02em}.album-year{font-size:12px;color:#777}.viewer{height:calc(100svh - 140px);min-height:400px;display:none;align-items:center;justify-content:center;position:relative;padding:0 clamp(45px,8vw,110px)}.viewer.active{display:flex}.viewer img{display:block;max-width:min(76vw,76vh);max-height:calc(100svh - 230px);width:auto;height:auto;object-fit:contain;opacity:1;transform:scale(1);transition:opacity .34s ease,transform .34s ease;user-select:none;-webkit-user-drag:none}.viewer img.changing{opacity:0;transform:scale(.985)}.nav{position:absolute;top:50%;transform:translateY(-50%);padding:15px;font-size:30px;font-weight:200;color:#888;transition:color .2s}.nav:hover{color:white}.prev{left:clamp(0px,2vw,30px)}.next{right:clamp(0px,2vw,30px)}footer{height:50px;display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:.16em;color:#777}#count{visibility:hidden}.hidden{display:none!important}@media(max-width:600px){header{height:75px;padding:0 22px}.albums{margin-top:55px}.album-grid{gap:18px}.album-title{font-size:12px}.album-meta{margin-top:12px}.viewer{height:calc(100svh - 125px);min-height:280px;padding:0 36px}.viewer img{max-width:calc(100vw - 80px);max-height:calc(100svh - 180px)}.nav{padding:7px;font-size:26px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+
+.status{font-size:13px;color:#999;line-height:1.7}.album img{object-fit:contain}.nav:disabled{opacity:.25;cursor:default}
+</style></head>
+<body><header><div class="brand" aria-hidden="true"></div><button id="back" aria-label="Back to travels">← TRAVELS</button></header>
+<main><section class="albums" id="album-page"><p class="section-label">TRAVELS</p><div class="album-grid" id="album-grid"></div><p id="status" class="status" role="status"></p></section>
+<section class="viewer" id="viewer" aria-label="Photo viewer"><button class="nav prev" id="prev" aria-label="Previous photo">‹</button><img id="photo" alt="" draggable="false"><button class="nav next" id="next" aria-label="Next photo">›</button></section></main>
+<footer><span id="count" aria-live="polite"></span></footer><script>
+const albumPage=document.getElementById('album-page');
+const viewer=document.getElementById('viewer');
+const grid=document.getElementById('album-grid');
+const photo=document.getElementById('photo');
+const count=document.getElementById('count');
+const back=document.getElementById('back');
+const status=document.getElementById('status');
+const prev=document.getElementById('prev');
+const next=document.getElementById('next');
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+let albums=[], currentAlbum=null, index=0, timer=null, requestId=0;
+function renderAlbums(){
+  grid.replaceChildren();
+  albums.forEach((album,i)=>{
+    const btn=document.createElement('button');btn.className='album';btn.type='button';
+    btn.setAttribute('aria-label','Open '+album.title);
+    const img=document.createElement('img');img.src=album.cover;img.alt=album.title+' cover';
+    img.loading=i>1?'lazy':'eager';img.decoding='async';
+    const meta=document.createElement('div');meta.className='album-meta';
+    const title=document.createElement('span');title.className='album-title';title.textContent=album.title;
+    const year=document.createElement('span');year.className='album-year';year.textContent=album.year;
+    meta.append(title,year);btn.append(img,meta);btn.addEventListener('click',()=>openAlbum(album.id));grid.append(btn);
+  });
+}
+function updatePhoto(){
+  if(!currentAlbum)return;
+  photo.src=currentAlbum.photos[index];photo.alt=currentAlbum.title+' photo '+(index+1);
+  count.textContent=String(index+1).padStart(2,'0')+' / '+String(currentAlbum.photos.length).padStart(2,'0');
+  prev.disabled=next.disabled=currentAlbum.photos.length<2;
+}
+function openAlbum(id,updateHash=true){
+  const album=albums.find(a=>a.id===id);if(!album)return;
+  clearTimeout(timer);requestId++;currentAlbum=album;index=0;photo.classList.remove('changing');
+  updatePhoto();albumPage.classList.add('hidden');viewer.classList.add('active');
+  count.style.visibility='visible';back.style.visibility='visible';
+  if(updateHash)history.pushState(null,'','#'+encodeURIComponent(id));
+}
+function goBack(updateHash=true){
+  clearTimeout(timer);requestId++;currentAlbum=null;viewer.classList.remove('active');
+  albumPage.classList.remove('hidden');count.style.visibility='hidden';back.style.visibility='hidden';
+  photo.removeAttribute('src');if(updateHash)history.pushState(null,'',location.pathname+location.search);
+}
+function move(step){
+  if(!currentAlbum||currentAlbum.photos.length<2)return;
+  clearTimeout(timer);const id=++requestId;
+  const target=(index+step+currentAlbum.photos.length)%currentAlbum.photos.length;
+  if(reduced.matches){index=target;updatePhoto();return;}
+  photo.classList.add('changing');
+  timer=setTimeout(()=>{
+    if(id!==requestId||!currentAlbum)return;
+    index=target;updatePhoto();
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{if(id===requestId)photo.classList.remove('changing')}));
+  },260);
+}
+function syncHash(){
+  const id=decodeURIComponent(location.hash.slice(1));
+  if(id&&albums.some(a=>a.id===id)){if(currentAlbum?.id!==id)openAlbum(id,false)}
+  else if(currentAlbum)goBack(false);
+}
+back.addEventListener('click',()=>goBack());prev.addEventListener('click',()=>move(-1));next.addEventListener('click',()=>move(1));
+document.addEventListener('keydown',e=>{
+  if(!currentAlbum)return;
+  if(e.key==='ArrowRight')move(1);
+  else if(e.key==='ArrowLeft')move(-1);
+  else if(e.key==='Escape')goBack();
+});
+let startX=null;
+viewer.addEventListener('touchstart',e=>{startX=e.changedTouches[0].screenX},{passive:true});
+viewer.addEventListener('touchend',e=>{if(startX===null)return;const dx=e.changedTouches[0].screenX-startX;if(Math.abs(dx)>45)move(dx<0?1:-1);startX=null},{passive:true});
+window.addEventListener('popstate',syncHash);window.addEventListener('hashchange',syncHash);
+async function init(){
+  try{
+    const response=await fetch('./albums.json',{cache:'no-cache'});
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    const data=await response.json();
+    if(!Array.isArray(data.albums))throw new Error('Invalid albums.json');
+    albums=data.albums.filter(a=>a&&typeof a.id==='string'&&typeof a.title==='string'&&/^\d{4}$/.test(String(a.year))&&typeof a.cover==='string'&&Array.isArray(a.photos)&&a.photos.length>0);
+    albums.sort((a,b)=>Number(b.year)-Number(a.year));
+    status.textContent=albums.length?'':'No albums yet.';
+    renderAlbums();syncHash();
+  }catch(error){
+    status.textContent='Could not load albums.json. Open this site through GitHub Pages or a local web server.';
+    console.error(error);
+  }
+}
+init();
+</script></body></html>
