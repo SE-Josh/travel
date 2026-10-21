@@ -2,7 +2,7 @@
   "albums": [
     {
       "id": "california-2026",
-      "title": "California",
+      "title": "CALIFORNIA",
       "year": "2026",
       "cover": "photos/california-2026/01.webp",
       "photos": [
@@ -10,17 +10,11 @@
         "photos/california-2026/02.webp",
         "photos/california-2026/03.webp",
         "photos/california-2026/04.webp",
-        "photos/california-2026/05.webp"
-      ]
-    },
-    {
-      "id": "little-moments-2026",
-      "title": "Little Moments",
-      "year": "2026",
-      "cover": "photos/little-moments-2026/01.webp",
-      "photos": [
-        "photos/little-moments-2026/01.webp"
-      ]
+        "photos/california-2026/05.webp",
+        "photos/california-2026/06.webp"
+      ],
+      "city": "CALIFORNIA",
+      "countryCode": "US"
     }
   ]
 }
