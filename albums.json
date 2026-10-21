@@ -15,6 +15,32 @@
       ],
       "city": "CALIFORNIA",
       "countryCode": "US"
+    },
+    {
+      "id": "singapore-2026",
+      "title": "SINGAPORE",
+      "city": "SINGAPORE",
+      "countryCode": "SG",
+      "year": "2026",
+      "cover": "photos/singapore-2026/10.webp",
+      "photos": [
+        "photos/singapore-2026/01.webp",
+        "photos/singapore-2026/02.webp",
+        "photos/singapore-2026/03.webp",
+        "photos/singapore-2026/04.webp",
+        "photos/singapore-2026/05.webp",
+        "photos/singapore-2026/06.webp",
+        "photos/singapore-2026/07.webp",
+        "photos/singapore-2026/08.webp",
+        "photos/singapore-2026/09.webp",
+        "photos/singapore-2026/10.webp",
+        "photos/singapore-2026/11.webp",
+        "photos/singapore-2026/12.webp",
+        "photos/singapore-2026/13.webp",
+        "photos/singapore-2026/14.webp",
+        "photos/singapore-2026/15.webp",
+        "photos/singapore-2026/16.webp"
+      ]
     }
   ]
 }

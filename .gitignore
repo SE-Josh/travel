@@ -1,0 +1,7 @@
+
+
+# Local originals; publish curated WebP photos only.
+/photos/singapore-2026/*.jpg
+/photos/singapore-2026/*.jpeg
+/photos/singapore-2026/*.JPG
+/photos/singapore-2026/*.JPEG
