@@ -1,97 +1,320 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d0d0d"><title>TRAVELS</title><style>
-:root{color-scheme:dark}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#0d0d0d;color:#ededed;font-family:Arial,Helvetica,sans-serif}body{min-height:100svh}button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}button:focus-visible,.album:focus-visible{outline:1px solid white;outline-offset:5px}header{height:90px;padding:0 clamp(22px,5vw,70px);display:flex;align-items:center;justify-content:space-between}header .brand{font-size:12px;letter-spacing:.16em;font-weight:500}#back{font-size:12px;letter-spacing:.06em;color:#999;visibility:hidden}#back:hover{color:white}main{min-height:calc(100svh - 140px)}.albums{width:min(1040px,calc(100% - 44px));margin:clamp(42px,10vh,100px) auto 80px}.section-label{font-size:11px;letter-spacing:.17em;color:#777;margin:0 0 34px}.album-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(22px,4vw,52px)}.album{display:block;text-align:left;padding:0;width:100%}.album img{display:block;width:100%;aspect-ratio:1;object-fit:cover;background:#191919;transition:opacity .3s ease}.album:hover img{opacity:.78}.album-meta{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:17px}.album-title{font-size:14px;letter-spacing:.02em}.album-year{font-size:12px;color:#777}.viewer{height:calc(100svh - 140px);min-height:400px;display:none;align-items:center;justify-content:center;position:relative;padding:0 clamp(45px,8vw,110px)}.viewer.active{display:flex}.viewer img{display:block;max-width:min(76vw,76vh);max-height:calc(100svh - 230px);width:auto;height:auto;object-fit:contain;opacity:1;transform:scale(1);transition:opacity .34s ease,transform .34s ease;user-select:none;-webkit-user-drag:none}.viewer img.changing{opacity:0;transform:scale(.985)}.nav{position:absolute;top:50%;transform:translateY(-50%);padding:15px;font-size:30px;font-weight:200;color:#888;transition:color .2s}.nav:hover{color:white}.prev{left:clamp(0px,2vw,30px)}.next{right:clamp(0px,2vw,30px)}footer{height:50px;display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:.16em;color:#777}#count{visibility:hidden}.hidden{display:none!important}@media(max-width:600px){header{height:75px;padding:0 22px}.albums{margin-top:55px}.album-grid{gap:18px}.album-title{font-size:12px}.album-meta{margin-top:12px}.viewer{height:calc(100svh - 125px);min-height:280px;padding:0 36px}.viewer img{max-width:calc(100vw - 80px);max-height:calc(100svh - 180px)}.nav{padding:7px;font-size:26px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
-
-.status{font-size:13px;color:#999;line-height:1.7}.album img{object-fit:contain}.nav:disabled{opacity:.25;cursor:default}
-</style></head>
-<body><header><div class="brand" aria-hidden="true"></div><button id="back" aria-label="Back to travels">← TRAVELS</button></header>
-<main><section class="albums" id="album-page"><p class="section-label">TRAVELS</p><div class="album-grid" id="album-grid"></div><p id="status" class="status" role="status"></p></section>
-<section class="viewer" id="viewer" aria-label="Photo viewer"><button class="nav prev" id="prev" aria-label="Previous photo">‹</button><img id="photo" alt="" draggable="false"><button class="nav next" id="next" aria-label="Next photo">›</button></section></main>
-<footer><span id="count" aria-live="polite"></span></footer><script>
-const albumPage=document.getElementById('album-page');
-const viewer=document.getElementById('viewer');
-const grid=document.getElementById('album-grid');
-const photo=document.getElementById('photo');
-const count=document.getElementById('count');
-const back=document.getElementById('back');
-const status=document.getElementById('status');
-const prev=document.getElementById('prev');
-const next=document.getElementById('next');
-const reduced=matchMedia('(prefers-reduced-motion: reduce)');
-let albums=[], currentAlbum=null, index=0, timer=null, requestId=0;
-function renderAlbums(){
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d0d0d">
+<title>TRAVELS</title>
+<link rel="preload" href="./assets/fonts/dm-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="./assets/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="./assets/fonts/fonts.css">
+<style>
+:root { color-scheme: dark; --background: #0d0d0d; --muted: #888; }
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+body {
+  height: 100svh; height: 100dvh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto;
+  background: var(--background); color: #ededed; font-family: 'DM Sans', Arial, Helvetica, sans-serif;
+}
+button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+button:focus-visible { outline: 1px solid #ededed; outline-offset: 3px; }
+button:disabled { opacity: .25; cursor: default; }
+.hidden { display: none !important; }
+header {
+  height: 76px; padding: 0 clamp(22px, 5vw, 70px);
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+}
+.brand, #back { padding: 12px 0; font-size: 11px; letter-spacing: .16em; white-space: nowrap; }
+.brand { margin: 0; font-family: 'Fraunces', Georgia, serif; font-size: 15px; font-weight: 400; letter-spacing: .12em; font-optical-sizing: auto; }
+#back { color: var(--muted); }
+#back:hover { color: #ededed; }
+.sort { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 68px; min-height: 44px; padding: 10px 8px; color: var(--muted); font-size: 10px; line-height: 1; letter-spacing: .12em; transition: color .2s; }
+.sort:hover { color: #ededed; }
+.sort-arrow { display: block; flex: 0 0 10px; width: 10px; height: 10px; }
+.sort[data-order="asc"] .sort-arrow { transform: rotate(180deg); }
+#album-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: 12px; }
+main { width: min(1120px, 100%); min-height: 0; min-width: 0; justify-self: center; padding: clamp(12px, 3vh, 30px) 28px; }
+.albums { height: 100%; position: relative; touch-action: pan-y pinch-zoom; }
+.album-grid {
+  height: 100%; display: grid;
+  grid-template-columns: repeat(var(--columns, 3), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--rows, 2), minmax(0, 1fr));
+  gap: 24px 32px; align-items: center; justify-items: center;
+}
+.album { width: 100%; max-width: var(--card-width, 440px); min-width: 0; padding: 0; text-align: left; }
+.album img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; background: #191919; transition: opacity .2s; }
+.album:hover img { opacity: .8; }
+.album-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 12px; line-height: 22px; }
+.album-name { display: flex; align-items: baseline; gap: 7px; min-width: 0; white-space: nowrap; }
+.album-city { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-family: 'Fraunces', Georgia, serif; font-optical-sizing: auto; font-size: 18px; letter-spacing: -.01em; }
+.album-country { flex-shrink: 0; color: var(--muted); font-size: 10px; letter-spacing: .08em; }
+.album-year { flex-shrink: 0; color: var(--muted); font-size: 11px; }
+.status { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; text-align: center; color: var(--muted); font-size: 13px; line-height: 1.7; }
+.status:empty { display: none; }
+.viewer { height: 100%; min-height: 0; position: relative; padding: 0 44px; touch-action: pan-y pinch-zoom; }
+.viewer img { display: block; width: 100%; height: 100%; object-fit: contain; user-select: none; -webkit-user-drag: none; opacity: 1; transition: opacity .2s; }
+.viewer img.changing { opacity: 0; }
+.nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 48px; padding: 0; font-size: 30px; color: var(--muted); }
+.nav:hover:enabled { color: #ededed; }
+.prev { left: 0; } .next { right: 0; }
+footer { height: 64px; display: flex; align-items: center; justify-content: center; }
+.pagination { display: flex; align-items: center; gap: 16px; }
+.pagination button { width: 44px; height: 44px; color: var(--muted); font-size: 18px; }
+#page-count, #count { min-width: 76px; text-align: center; font-size: 10px; letter-spacing: .16em; color: var(--muted); font-variant-numeric: tabular-nums; }
+@media (max-width: 599px) {
+  header { height: 64px; padding: 0 22px; gap: 12px; }
+  main { padding: 12px 24px; }
+  .album-grid { gap: 24px; }
+  .album-meta { margin-top: 10px; }
+  .album-city { font-size: 17px; }
+  .viewer { padding: 0 24px; }
+  .nav { width: 30px; }
+  .prev { left: -10px; } .next { right: -10px; }
+  footer { height: 56px; }
+}
+@media (max-height: 450px) {
+  header { height: 48px; }
+  main { padding-top: 6px; padding-bottom: 6px; }
+  footer { height: 44px; }
+  .album-meta { margin-top: 6px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+</style>
+</head>
+<body>
+<header>
+  <h1 class="brand" id="brand">TRAVELS</h1>
+  <button id="back" class="hidden" type="button" aria-label="Back to travels">← TRAVELS</button>
+  <button class="sort" id="sort" type="button" data-order="desc" aria-label="Year: newest first. Switch to oldest first." title="Newest first · Click for oldest first">
+    <span>YEAR</span><svg class="sort-arrow" id="sort-arrow" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 2v8M3 7l3 3 3-3"/></svg>
+  </button>
+  <span id="album-title" class="hidden"></span>
+</header>
+<main>
+  <section class="albums" id="album-page" aria-label="Travel albums">
+    <div class="album-grid" id="album-grid"></div>
+    <p id="status" class="status" role="status">Loading albums…</p>
+  </section>
+  <section class="viewer hidden" id="viewer" aria-label="Photo viewer">
+    <button class="nav prev" id="prev" type="button" aria-label="Previous photo">‹</button>
+    <img id="photo" alt="" draggable="false">
+    <button class="nav next" id="next" type="button" aria-label="Next photo">›</button>
+  </section>
+</main>
+<footer>
+  <nav class="pagination" id="pagination" aria-label="Album pages">
+    <button id="page-prev" type="button" aria-label="Previous album page" disabled>←</button>
+    <span id="page-count" role="status" aria-live="polite" aria-atomic="true">01 / 01</span>
+    <button id="page-next" type="button" aria-label="Next album page" disabled>→</button>
+  </nav>
+  <span id="count" class="hidden" aria-live="polite" aria-atomic="true"></span>
+</footer>
+<script>
+const albumPage = document.getElementById('album-page');
+const viewer = document.getElementById('viewer');
+const grid = document.getElementById('album-grid');
+const photo = document.getElementById('photo');
+const count = document.getElementById('count');
+const back = document.getElementById('back');
+const brand = document.getElementById('brand');
+const status = document.getElementById('status');
+const prev = document.getElementById('prev');
+const next = document.getElementById('next');
+const sort = document.getElementById('sort');
+const albumTitle = document.getElementById('album-title');
+const pagination = document.getElementById('pagination');
+const pagePrev = document.getElementById('page-prev');
+const pageNext = document.getElementById('page-next');
+const pageCount = document.getElementById('page-count');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+let albums = [], currentAlbum = null, index = 0, timer = null, requestId = 0;
+let order = 'desc', page = 0, pageSize = 6, returnAlbumId = null;
+const pad = value => String(value).padStart(2, '0');
+function albumCity(album) {
+  return typeof album.city === 'string' && album.city.trim() ? album.city.trim() : album.title;
+}
+function albumCountry(album) {
+  const code = typeof album.countryCode === 'string' ? album.countryCode.trim().toUpperCase() : '';
+  return /^[A-Z]{2}$/.test(code) ? code : '';
+}
+function albumLabel(album) {
+  const code = albumCountry(album);
+  return albumCity(album) + (code ? ' · ' + code : '');
+}
+function sortedAlbums() {
+  // Sort a fresh copy so equal years always retain their JSON order in both directions.
+  return [...albums].sort((a, b) => (order === 'desc' ? -1 : 1) * (Number(a.year) - Number(b.year)));
+}
+function renderAlbums(focusId = document.activeElement?.dataset.albumId) {
+  const ordered = sortedAlbums();
+  const total = Math.max(1, Math.ceil(ordered.length / pageSize));
+  page = Math.max(0, Math.min(page, total - 1));
   grid.replaceChildren();
-  albums.forEach((album,i)=>{
-    const btn=document.createElement('button');btn.className='album';btn.type='button';
-    btn.setAttribute('aria-label','Open '+album.title);
-    const img=document.createElement('img');img.src=album.cover;img.alt=album.title+' cover';
-    img.loading=i>1?'lazy':'eager';img.decoding='async';
-    const meta=document.createElement('div');meta.className='album-meta';
-    const title=document.createElement('span');title.className='album-title';title.textContent=album.title;
-    const year=document.createElement('span');year.className='album-year';year.textContent=album.year;
-    meta.append(title,year);btn.append(img,meta);btn.addEventListener('click',()=>openAlbum(album.id));grid.append(btn);
+  ordered.slice(page * pageSize, (page + 1) * pageSize).forEach(album => {
+    const btn = document.createElement('button');
+    btn.className = 'album'; btn.type = 'button'; btn.dataset.albumId = album.id;
+    btn.setAttribute('aria-label', 'Open ' + albumLabel(album) + ', ' + album.year);
+    const img = document.createElement('img');
+    img.src = album.cover; img.alt = ''; img.decoding = 'async'; img.draggable = false;
+    const meta = document.createElement('div'); meta.className = 'album-meta';
+    const title = document.createElement('span'); title.className = 'album-name'; title.title = albumLabel(album);
+    const city = document.createElement('span'); city.className = 'album-city'; city.textContent = albumCity(album);
+    title.append(city);
+    const code = albumCountry(album);
+    if (code) {
+      const country = document.createElement('span'); country.className = 'album-country'; country.textContent = '· ' + code;
+      title.append(country);
+    }
+    const year = document.createElement('span'); year.className = 'album-year'; year.textContent = album.year;
+    meta.append(title, year); btn.append(img, meta);
+    btn.addEventListener('click', () => openAlbum(album.id)); grid.append(btn);
   });
+  pageCount.textContent = pad(page + 1) + ' / ' + pad(total);
+  pagePrev.disabled = !ordered.length || page === 0;
+  pageNext.disabled = !ordered.length || page === total - 1;
+  if (focusId) [...grid.children].find(btn => btn.dataset.albumId === focusId)?.focus({preventScroll: true});
 }
-function updatePhoto(){
-  if(!currentAlbum)return;
-  photo.src=currentAlbum.photos[index];photo.alt=currentAlbum.title+' photo '+(index+1);
-  count.textContent=String(index+1).padStart(2,'0')+' / '+String(currentAlbum.photos.length).padStart(2,'0');
-  prev.disabled=next.disabled=currentAlbum.photos.length<2;
+function layoutAlbums() {
+  if (currentAlbum) return;
+  const firstId = sortedAlbums()[page * pageSize]?.id;
+  const width = albumPage.clientWidth, height = albumPage.clientHeight;
+  let columns = innerWidth < 600 ? 1 : innerWidth < 900 ? 2 : 3;
+  let rows = height < (columns === 1 ? 330 : 360) ? 1 : 2;
+  // Sparse collections are centered; pagination keeps this layout on every page.
+  if (albums.length > 0 && albums.length <= 2) {
+    columns = Math.min(columns, albums.length);
+    rows = Math.min(rows, Math.ceil(albums.length / columns));
+  }
+  const newSize = columns * rows;
+  if (newSize !== pageSize && firstId) page = Math.floor(sortedAlbums().findIndex(a => a.id === firstId) / newSize);
+  pageSize = newSize;
+  const gap = innerWidth < 600 ? 24 : 32;
+  const rowGap = 24;
+  const metaHeight = innerHeight <= 450 ? 28 : innerWidth < 600 ? 32 : 34;
+  const cellHeight = (height - rowGap * (rows - 1)) / rows;
+  const cardWidth = Math.max(0, Math.min(440, (width - gap * (columns - 1)) / columns, (cellHeight - metaHeight) * 1.5));
+  grid.style.setProperty('--columns', columns);
+  grid.style.setProperty('--rows', rows);
+  grid.style.setProperty('--card-width', cardWidth + 'px');
+  renderAlbums();
 }
-function openAlbum(id,updateHash=true){
-  const album=albums.find(a=>a.id===id);if(!album)return;
-  clearTimeout(timer);requestId++;currentAlbum=album;index=0;photo.classList.remove('changing');
-  updatePhoto();albumPage.classList.add('hidden');viewer.classList.add('active');
-  count.style.visibility='visible';back.style.visibility='visible';
-  if(updateHash)history.pushState(null,'','#'+encodeURIComponent(id));
+function changePage(step) {
+  const total = Math.max(1, Math.ceil(albums.length / pageSize));
+  const target = Math.max(0, Math.min(page + step, total - 1));
+  if (target === page) return;
+  const focused = document.activeElement;
+  const focusWasCard = grid.contains(focused);
+  page = target; renderAlbums();
+  if (focusWasCard) grid.firstElementChild?.focus({preventScroll: true});
+  else if (focused?.disabled) (step > 0 ? pagePrev : pageNext).focus({preventScroll: true});
 }
-function goBack(updateHash=true){
-  clearTimeout(timer);requestId++;currentAlbum=null;viewer.classList.remove('active');
-  albumPage.classList.remove('hidden');count.style.visibility='hidden';back.style.visibility='hidden';
-  photo.removeAttribute('src');if(updateHash)history.pushState(null,'',location.pathname+location.search);
+function updatePhoto() {
+  if (!currentAlbum) return;
+  photo.src = currentAlbum.photos[index]; photo.alt = albumLabel(currentAlbum) + ' photo ' + (index + 1);
+  count.textContent = pad(index + 1) + ' / ' + pad(currentAlbum.photos.length);
+  prev.disabled = next.disabled = currentAlbum.photos.length < 2;
 }
-function move(step){
-  if(!currentAlbum||currentAlbum.photos.length<2)return;
-  clearTimeout(timer);const id=++requestId;
-  const target=(index+step+currentAlbum.photos.length)%currentAlbum.photos.length;
-  if(reduced.matches){index=target;updatePhoto();return;}
+function openAlbum(id, updateHash = true) {
+  const album = albums.find(a => a.id === id); if (!album) return;
+  clearTimeout(timer); requestId++; currentAlbum = album; returnAlbumId = id; index = 0;
+  page = Math.floor(sortedAlbums().findIndex(a => a.id === id) / pageSize);
+  photo.classList.remove('changing'); updatePhoto();
+  albumPage.classList.add('hidden'); viewer.classList.remove('hidden');
+  brand.classList.add('hidden'); sort.classList.add('hidden'); pagination.classList.add('hidden');
+  back.classList.remove('hidden'); albumTitle.classList.remove('hidden'); count.classList.remove('hidden');
+  albumTitle.textContent = albumLabel(album) + ' / ' + album.year;
+  back.focus({preventScroll: true});
+  if (updateHash) history.pushState(null, '', '#' + encodeURIComponent(id));
+}
+function goBack(updateHash = true) {
+  clearTimeout(timer); requestId++; currentAlbum = null;
+  viewer.classList.add('hidden'); albumPage.classList.remove('hidden');
+  brand.classList.remove('hidden'); sort.classList.remove('hidden'); pagination.classList.remove('hidden');
+  back.classList.add('hidden'); albumTitle.classList.add('hidden'); count.classList.add('hidden');
+  photo.removeAttribute('src'); photo.alt = '';
+  layoutAlbums();
+  const position = sortedAlbums().findIndex(a => a.id === returnAlbumId);
+  if (position >= 0) page = Math.floor(position / pageSize);
+  renderAlbums(returnAlbumId);
+  if (updateHash) history.pushState(null, '', location.pathname + location.search);
+}
+function move(step) {
+  if (!currentAlbum || currentAlbum.photos.length < 2) return;
+  clearTimeout(timer); const id = ++requestId;
+  index = (index + step + currentAlbum.photos.length) % currentAlbum.photos.length;
+  if (reduced.matches) { photo.classList.remove('changing'); updatePhoto(); return; }
   photo.classList.add('changing');
-  timer=setTimeout(()=>{
-    if(id!==requestId||!currentAlbum)return;
-    index=target;updatePhoto();
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{if(id===requestId)photo.classList.remove('changing')}));
-  },260);
+  timer = setTimeout(() => {
+    if (id !== requestId || !currentAlbum) return;
+    updatePhoto();
+    requestAnimationFrame(() => requestAnimationFrame(() => { if (id === requestId) photo.classList.remove('changing'); }));
+  }, 160);
 }
-function syncHash(){
-  const id=decodeURIComponent(location.hash.slice(1));
-  if(id&&albums.some(a=>a.id===id)){if(currentAlbum?.id!==id)openAlbum(id,false)}
-  else if(currentAlbum)goBack(false);
+function syncHash() {
+  let id;
+  try { id = decodeURIComponent(location.hash.slice(1)); } catch { id = ''; }
+  if (id && albums.some(a => a.id === id)) { if (currentAlbum?.id !== id) openAlbum(id, false); }
+  else if (currentAlbum) goBack(false);
 }
-back.addEventListener('click',()=>goBack());prev.addEventListener('click',()=>move(-1));next.addEventListener('click',()=>move(1));
-document.addEventListener('keydown',e=>{
-  if(!currentAlbum)return;
-  if(e.key==='ArrowRight')move(1);
-  else if(e.key==='ArrowLeft')move(-1);
-  else if(e.key==='Escape')goBack();
+back.addEventListener('click', () => goBack());
+prev.addEventListener('click', () => move(-1)); next.addEventListener('click', () => move(1));
+pagePrev.addEventListener('click', () => changePage(-1)); pageNext.addEventListener('click', () => changePage(1));
+sort.addEventListener('click', () => {
+  order = order === 'desc' ? 'asc' : 'desc'; page = 0;
+  const newestFirst = order === 'desc';
+  sort.dataset.order = order;
+  sort.setAttribute('aria-label', newestFirst ? 'Year: newest first. Switch to oldest first.' : 'Year: oldest first. Switch to newest first.');
+  sort.title = newestFirst ? 'Newest first · Click for oldest first' : 'Oldest first · Click for newest first';
+  renderAlbums();
 });
-let startX=null;
-viewer.addEventListener('touchstart',e=>{startX=e.changedTouches[0].screenX},{passive:true});
-viewer.addEventListener('touchend',e=>{if(startX===null)return;const dx=e.changedTouches[0].screenX-startX;if(Math.abs(dx)>45)move(dx<0?1:-1);startX=null},{passive:true});
-window.addEventListener('popstate',syncHash);window.addEventListener('hashchange',syncHash);
-async function init(){
-  try{
-    const response=await fetch('./albums.json',{cache:'no-cache'});
-    if(!response.ok)throw new Error('HTTP '+response.status);
-    const data=await response.json();
-    if(!Array.isArray(data.albums))throw new Error('Invalid albums.json');
-    albums=data.albums.filter(a=>a&&typeof a.id==='string'&&typeof a.title==='string'&&/^\d{4}$/.test(String(a.year))&&typeof a.cover==='string'&&Array.isArray(a.photos)&&a.photos.length>0);
-    albums.sort((a,b)=>Number(b.year)-Number(a.year));
-    status.textContent=albums.length?'':'No albums yet.';
-    renderAlbums();syncHash();
-  }catch(error){
-    status.textContent='Could not load albums.json. Open this site through GitHub Pages or a local web server.';
+document.addEventListener('keydown', event => {
+  if (event.altKey || event.ctrlKey || event.metaKey || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
+  if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+    event.preventDefault(); const step = event.key === 'ArrowRight' ? 1 : -1;
+    currentAlbum ? move(step) : changePage(step);
+  } else if (event.key === 'Escape' && currentAlbum) goBack();
+});
+function enableSwipe(element, action) {
+  let start = null;
+  element.addEventListener('touchstart', event => {
+    start = event.touches.length === 1 ? {x: event.touches[0].clientX, y: event.touches[0].clientY} : null;
+  }, {passive: true});
+  element.addEventListener('touchcancel', () => { start = null; }, {passive: true});
+  element.addEventListener('touchend', event => {
+    if (!start) return;
+    const dx = event.changedTouches[0].clientX - start.x;
+    const dy = event.changedTouches[0].clientY - start.y;
+    start = null;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.2) action(dx < 0 ? 1 : -1);
+  }, {passive: true});
+}
+enableSwipe(albumPage, changePage); enableSwipe(viewer, move);
+window.addEventListener('popstate', syncHash); window.addEventListener('hashchange', syncHash);
+new ResizeObserver(layoutAlbums).observe(albumPage);
+window.addEventListener('resize', layoutAlbums);
+async function init() {
+  try {
+    const response = await fetch('./albums.json', {cache: 'no-cache'});
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    const data = await response.json();
+    if (!Array.isArray(data.albums)) throw new Error('Invalid albums.json');
+    const ids = new Set();
+    albums = data.albums.filter(album => {
+      if (!album || typeof album.id !== 'string' || !album.id || ids.has(album.id) || typeof album.title !== 'string' ||
+          !/^\d{4}$/.test(String(album.year)) || typeof album.cover !== 'string' ||
+          !Array.isArray(album.photos) || !album.photos.length || album.photos.some(path => typeof path !== 'string' || !path)) return false;
+      ids.add(album.id); return true;
+    });
+    status.textContent = albums.length ? '' : 'No albums yet.';
+    layoutAlbums(); syncHash();
+  } catch (error) {
+    status.textContent = 'Could not load albums. Please try again through GitHub Pages or a local web server.';
     console.error(error);
   }
 }
 init();
-</script></body></html>
+</script>
+</body>
+</html>
