@@ -1,7 +1,12 @@
+# Local originals and uploads; publish curated WebP photos only.
+/photos/**/*.[jJ][pP][gG]
+/photos/**/*.[jJ][pP][eE][gG]
+/photos/**/*.[hH][eE][iI][cC]
+*.[zZ][iI][pP]
 
-
-# Local originals; publish curated WebP photos only.
-/photos/singapore-2026/*.jpg
-/photos/singapore-2026/*.jpeg
-/photos/singapore-2026/*.JPG
-/photos/singapore-2026/*.JPEG
+# OS, Python and local development files.
+.DS_Store
+Thumbs.db
+__pycache__/
+*.py[cod]
+.venv/

@@ -168,7 +168,7 @@ function renderAlbums(focusId = document.activeElement?.dataset.albumId) {
     btn.className = 'album'; btn.type = 'button'; btn.dataset.albumId = album.id;
     btn.setAttribute('aria-label', 'Open ' + albumLabel(album) + ', ' + album.year);
     const img = document.createElement('img');
-    img.src = album.cover; img.alt = ''; img.decoding = 'async'; img.draggable = false;
+    img.src = album.coverThumbnail || album.cover; img.alt = ''; img.decoding = 'async'; img.draggable = false;
     const meta = document.createElement('div'); meta.className = 'album-meta';
     const title = document.createElement('span'); title.className = 'album-name'; title.title = albumLabel(album);
     const city = document.createElement('span'); city.className = 'album-city'; city.textContent = albumCity(album);

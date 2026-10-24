@@ -7,7 +7,10 @@ Minimal travel gallery for GitHub Pages. No build tools required.
 1. Create a new folder, e.g. `photos/japan-2027/`.
 2. Add your optimized images (`01.webp`, `02.webp`, etc.).
 3. Add an album entry in `albums.json` with a unique `id`, `title`, `year`, `cover` and ordered `photos` list.
-4. Commit and push. GitHub Pages will publish the update.
+4. Run `python scripts/generate_covers.py` to generate cover thumbnails and update `coverThumbnail` in `albums.json`.
+5. Commit the photos, thumbnails and `albums.json`, then push. GitHub Pages will publish the update.
+
+To change a cover, update the album's `cover` path and rerun the thumbnail command. It creates an image up to 800px on its longest side, gives it a content-based filename to refresh browser caches, and removes outdated generated thumbnails. Full-size photos and their viewing order stay unchanged. Albums without `coverThumbnail` fall back to `cover`.
 
 The gallery defaults to newest year first (YEAR ↓). Click the YEAR button to toggle to oldest year first (YEAR ↑); albums with the same year retain their JSON order in both directions. Changing sort order returns to page one.
 
@@ -29,18 +32,36 @@ Then open `http://localhost:8000/`.
 
 ## Deploy
 
-Create a public GitHub repository called `travel`, upload the **contents** of this folder to its root, and enable **Settings → Pages → Deploy from a branch → main / (root)**.
+GitHub Pages serves the repository root from `main`. Configure **Settings → Pages → Deploy from a branch → main / (root)**. The generated thumbnails are committed, so deployment needs no build step.
 
-The site will be available at `https://se-josh.github.io/travel/` once published.
+The site is published at `https://se-josh.github.io/travel/`.
+
+## Development checks
+
+Serving the site only needs Python. To regenerate thumbnails or run browser tests, use Python 3.12+ and install the development dependencies:
+
+```bash
+python -m venv .venv
+. .venv/bin/activate
+python -m pip install -r requirements-dev.txt
+python -m playwright install chromium
+```
+
+The tests can also use an existing system `chromium`. Run from the repository root:
+
+```bash
+python scripts/generate_covers.py --check
+python -m unittest discover -s tests -v
+```
+
+The browser tests exercise slow image loading, rapid navigation, returning to another album, and failed-image retries. They read album paths and photo counts from `albums.json`.
 
 ## Notes
 
 - On iPhone, open the site in Safari, choose **Share → Add to Home Screen**, and use **Open as Web App** if that option appears. The home screen name is TRAVELS; the icon is a flat illustration of the Palo Alto clock tower. The gallery still loads its content over the network.
 - If a previously added home screen icon stays cached, remove that shortcut and add it again after the site updates.
 - Icon assets live in `assets/icons/`, including the 1024px master, an opaque 180px Apple touch icon, 192px/512px manifest icons and a 32px favicon. Keep icon URLs relative so they work under GitHub Pages' `/travel/` path; the OS applies the home screen corner mask.
-
 - Images are separate files, not embedded in HTML.
-- The original video is not included in this photo gallery.
 - Keep album `id` values unique, use relative paths, and preserve JSON syntax.
 
 ## Typography and location labels

@@ -19,7 +19,8 @@
         "photos/yilan-2026/09.webp",
         "photos/yilan-2026/10.webp",
         "photos/yilan-2026/11.webp"
-      ]
+      ],
+      "coverThumbnail": "assets/covers/yilan-2026-ea08c95fa249.webp"
     },
     {
       "id": "palo-alto-2026",
@@ -45,7 +46,8 @@
         "photos/palo-alto-2026/13.webp",
         "photos/palo-alto-2026/14.webp",
         "photos/palo-alto-2026/15.webp"
-      ]
+      ],
+      "coverThumbnail": "assets/covers/palo-alto-2026-b51537b255b1.webp"
     },
     {
       "id": "singapore-2026",
@@ -71,7 +73,8 @@
         "photos/singapore-2026/14.webp",
         "photos/singapore-2026/15.webp",
         "photos/singapore-2026/16.webp"
-      ]
+      ],
+      "coverThumbnail": "assets/covers/singapore-2026-eaabecbe98b5.webp"
     },
     {
       "id": "nagoya-2025",
@@ -93,7 +96,8 @@
         "photos/nagoya-2025/10.webp",
         "photos/nagoya-2025/11.webp",
         "photos/nagoya-2025/12.webp"
-      ]
+      ],
+      "coverThumbnail": "assets/covers/nagoya-2025-e7f72f91daaf.webp"
     },
     {
       "id": "busan-2025",
@@ -115,7 +119,8 @@
         "photos/busan-2025/10.webp",
         "photos/busan-2025/11.webp",
         "photos/busan-2025/12.webp"
-      ]
+      ],
+      "coverThumbnail": "assets/covers/busan-2025-1c45f8a5cb8b.webp"
     },
     {
       "id": "kuala-lumpur-2024",
@@ -141,7 +146,8 @@
         "photos/kuala-lumpur-2024/14.webp",
         "photos/kuala-lumpur-2024/15.webp",
         "photos/kuala-lumpur-2024/16.webp"
-      ]
+      ],
+      "coverThumbnail": "assets/covers/kuala-lumpur-2024-0c9f772af333.webp"
     },
     {
       "id": "tokyo-2024",
@@ -167,7 +173,8 @@
         "photos/tokyo-2024/14.webp",
         "photos/tokyo-2024/15.webp",
         "photos/tokyo-2024/16.webp"
-      ]
+      ],
+      "coverThumbnail": "assets/covers/tokyo-2024-1076fbc76678.webp"
     },
     {
       "id": "ipoh-2023",
@@ -190,7 +197,8 @@
         "photos/ipoh-2023/11.webp",
         "photos/ipoh-2023/12.webp",
         "photos/ipoh-2023/13.webp"
-      ]
+      ],
+      "coverThumbnail": "assets/covers/ipoh-2023-fa00bb45c404.webp"
     },
     {
       "id": "macau-2019",
@@ -209,7 +217,8 @@
         "photos/macau-2019/07.webp",
         "photos/macau-2019/08.webp",
         "photos/macau-2019/09.webp"
-      ]
+      ],
+      "coverThumbnail": "assets/covers/macau-2019-8c1497fbfabb.webp"
     },
     {
       "id": "osaka-2018",
@@ -225,7 +234,8 @@
         "photos/osaka-2018/04.webp",
         "photos/osaka-2018/05.webp",
         "photos/osaka-2018/06.webp"
-      ]
+      ],
+      "coverThumbnail": "assets/covers/osaka-2018-efee2832da0b.webp"
     }
   ]
 }
