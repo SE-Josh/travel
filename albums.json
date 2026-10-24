@@ -191,6 +191,22 @@
         "photos/ipoh-2023/12.webp",
         "photos/ipoh-2023/13.webp"
       ]
+    },
+    {
+      "id": "osaka-2018",
+      "title": "OSAKA",
+      "city": "OSAKA",
+      "countryCode": "JP",
+      "year": "2018",
+      "cover": "photos/osaka-2018/02.webp",
+      "photos": [
+        "photos/osaka-2018/01.webp",
+        "photos/osaka-2018/02.webp",
+        "photos/osaka-2018/03.webp",
+        "photos/osaka-2018/04.webp",
+        "photos/osaka-2018/05.webp",
+        "photos/osaka-2018/06.webp"
+      ]
     }
   ]
 }
