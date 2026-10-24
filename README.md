@@ -35,6 +35,10 @@ The site will be available at `https://se-josh.github.io/travel/` once published
 
 ## Notes
 
+- On iPhone, open the site in Safari, choose **Share → Add to Home Screen**, and use **Open as Web App** if that option appears. The home screen name is TRAVELS; the icon is a flat illustration of the Palo Alto clock tower. The gallery still loads its content over the network.
+- If a previously added home screen icon stays cached, remove that shortcut and add it again after the site updates.
+- Icon assets live in `assets/icons/`, including the 1024px master, an opaque 180px Apple touch icon, 192px/512px manifest icons and a 32px favicon. Keep icon URLs relative so they work under GitHub Pages' `/travel/` path; the OS applies the home screen corner mask.
+
 - Images are separate files, not embedded in HTML.
 - The original video is not included in this photo gallery.
 - Keep album `id` values unique, use relative paths, and preserve JSON syntax.
