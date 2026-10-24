@@ -116,6 +116,32 @@
         "photos/busan-2025/11.webp",
         "photos/busan-2025/12.webp"
       ]
+    },
+    {
+      "id": "kuala-lumpur-2024",
+      "title": "KUALA LUMPUR",
+      "city": "KUALA LUMPUR",
+      "countryCode": "MY",
+      "year": "2024",
+      "cover": "photos/kuala-lumpur-2024/09.webp",
+      "photos": [
+        "photos/kuala-lumpur-2024/01.webp",
+        "photos/kuala-lumpur-2024/02.webp",
+        "photos/kuala-lumpur-2024/03.webp",
+        "photos/kuala-lumpur-2024/04.webp",
+        "photos/kuala-lumpur-2024/05.webp",
+        "photos/kuala-lumpur-2024/06.webp",
+        "photos/kuala-lumpur-2024/07.webp",
+        "photos/kuala-lumpur-2024/08.webp",
+        "photos/kuala-lumpur-2024/09.webp",
+        "photos/kuala-lumpur-2024/10.webp",
+        "photos/kuala-lumpur-2024/11.webp",
+        "photos/kuala-lumpur-2024/12.webp",
+        "photos/kuala-lumpur-2024/13.webp",
+        "photos/kuala-lumpur-2024/14.webp",
+        "photos/kuala-lumpur-2024/15.webp",
+        "photos/kuala-lumpur-2024/16.webp"
+      ]
     }
   ]
 }
