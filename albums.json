@@ -1,20 +1,29 @@
 {
   "albums": [
     {
-      "id": "california-2026",
-      "title": "CALIFORNIA",
+      "id": "palo-alto-2026",
+      "title": "PALO ALTO",
+      "city": "PALO ALTO",
+      "countryCode": "US",
       "year": "2026",
-      "cover": "photos/california-2026/01.webp",
+      "cover": "photos/palo-alto-2026/04.webp",
       "photos": [
-        "photos/california-2026/01.webp",
-        "photos/california-2026/02.webp",
-        "photos/california-2026/03.webp",
-        "photos/california-2026/04.webp",
-        "photos/california-2026/05.webp",
-        "photos/california-2026/06.webp"
-      ],
-      "city": "CALIFORNIA",
-      "countryCode": "US"
+        "photos/palo-alto-2026/01.webp",
+        "photos/palo-alto-2026/02.webp",
+        "photos/palo-alto-2026/03.webp",
+        "photos/palo-alto-2026/04.webp",
+        "photos/palo-alto-2026/05.webp",
+        "photos/palo-alto-2026/06.webp",
+        "photos/palo-alto-2026/07.webp",
+        "photos/palo-alto-2026/08.webp",
+        "photos/palo-alto-2026/09.webp",
+        "photos/palo-alto-2026/10.webp",
+        "photos/palo-alto-2026/11.webp",
+        "photos/palo-alto-2026/12.webp",
+        "photos/palo-alto-2026/13.webp",
+        "photos/palo-alto-2026/14.webp",
+        "photos/palo-alto-2026/15.webp"
+      ]
     },
     {
       "id": "singapore-2026",
