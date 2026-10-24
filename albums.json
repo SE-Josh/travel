@@ -193,6 +193,25 @@
       ]
     },
     {
+      "id": "macau-2019",
+      "title": "MACAU",
+      "city": "MACAU",
+      "countryCode": "MO",
+      "year": "2019",
+      "cover": "photos/macau-2019/07.webp",
+      "photos": [
+        "photos/macau-2019/01.webp",
+        "photos/macau-2019/02.webp",
+        "photos/macau-2019/03.webp",
+        "photos/macau-2019/04.webp",
+        "photos/macau-2019/05.webp",
+        "photos/macau-2019/06.webp",
+        "photos/macau-2019/07.webp",
+        "photos/macau-2019/08.webp",
+        "photos/macau-2019/09.webp"
+      ]
+    },
+    {
       "id": "osaka-2018",
       "title": "OSAKA",
       "city": "OSAKA",
