@@ -94,6 +94,28 @@
         "photos/nagoya-2025/11.webp",
         "photos/nagoya-2025/12.webp"
       ]
+    },
+    {
+      "id": "busan-2025",
+      "title": "BUSAN",
+      "city": "BUSAN",
+      "countryCode": "KR",
+      "year": "2025",
+      "cover": "photos/busan-2025/09.webp",
+      "photos": [
+        "photos/busan-2025/01.webp",
+        "photos/busan-2025/02.webp",
+        "photos/busan-2025/03.webp",
+        "photos/busan-2025/04.webp",
+        "photos/busan-2025/05.webp",
+        "photos/busan-2025/06.webp",
+        "photos/busan-2025/07.webp",
+        "photos/busan-2025/08.webp",
+        "photos/busan-2025/09.webp",
+        "photos/busan-2025/10.webp",
+        "photos/busan-2025/11.webp",
+        "photos/busan-2025/12.webp"
+      ]
     }
   ]
 }
