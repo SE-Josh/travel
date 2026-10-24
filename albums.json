@@ -1,6 +1,27 @@
 {
   "albums": [
     {
+      "id": "yilan-2026",
+      "title": "YILAN",
+      "city": "YILAN",
+      "countryCode": "TW",
+      "year": "2026",
+      "cover": "photos/yilan-2026/04.webp",
+      "photos": [
+        "photos/yilan-2026/01.webp",
+        "photos/yilan-2026/02.webp",
+        "photos/yilan-2026/03.webp",
+        "photos/yilan-2026/04.webp",
+        "photos/yilan-2026/05.webp",
+        "photos/yilan-2026/06.webp",
+        "photos/yilan-2026/07.webp",
+        "photos/yilan-2026/08.webp",
+        "photos/yilan-2026/09.webp",
+        "photos/yilan-2026/10.webp",
+        "photos/yilan-2026/11.webp"
+      ]
+    },
+    {
       "id": "palo-alto-2026",
       "title": "PALO ALTO",
       "city": "PALO ALTO",
