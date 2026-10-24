@@ -46,7 +46,7 @@ class PhotoNavigationTests(unittest.IsolatedAsyncioTestCase):
 
     async def open_album(self, page):
         await page.goto(self.base + '/#palo-alto-2026')
-        await expect(page.locator('#count')).to_have_text('01 / 15')
+        await expect(page.locator('#count')).to_have_text('01 / 16')
         await page.wait_for_function(
             'document.querySelector("#photo").complete && document.querySelector("#photo").naturalWidth > 0')
 
@@ -71,7 +71,7 @@ class PhotoNavigationTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual(state['src'], 'photos/palo-alto-2026/01.webp')
                     self.assertEqual(state['opacity'], '1')
                     self.assertTrue(state['complete'])
-                    await expect(page.locator('#count')).to_have_text('01 / 15')
+                    await expect(page.locator('#count')).to_have_text('01 / 16')
                     # Catch a premature reveal even within a single animation frame.
                     await page.evaluate("""() => {
                         window.badFrames = [];
@@ -85,7 +85,7 @@ class PhotoNavigationTests(unittest.IsolatedAsyncioTestCase):
                         requestAnimationFrame(sample);
                     }""")
                     release.set()
-                    await expect(page.locator('#count')).to_have_text('02 / 15')
+                    await expect(page.locator('#count')).to_have_text('02 / 16')
                     await expect(page.locator('#photo')).to_have_css('opacity', '1')
                     self.assertEqual(await page.evaluate('window.checkFrames = false; window.badFrames'), [])
                     await page.close()
@@ -102,7 +102,7 @@ class PhotoNavigationTests(unittest.IsolatedAsyncioTestCase):
         await self.open_album(page)
         await page.locator('#next').click()
         await page.keyboard.press('ArrowRight')
-        await expect(page.locator('#count')).to_have_text('03 / 15')
+        await expect(page.locator('#count')).to_have_text('03 / 16')
         release.set()
         await page.wait_for_timeout(500)
         await expect(page.locator('#photo')).to_have_attribute('src', 'photos/palo-alto-2026/03.webp')
@@ -132,10 +132,10 @@ class PhotoNavigationTests(unittest.IsolatedAsyncioTestCase):
         await expect(page.locator('#photo-status')).to_contain_text('Could not load photo')
         await expect(page.locator('#photo')).to_have_attribute('src', 'photos/palo-alto-2026/01.webp')
         await expect(page.locator('#photo')).to_have_css('opacity', '1')
-        await expect(page.locator('#count')).to_have_text('01 / 15')
+        await expect(page.locator('#count')).to_have_text('01 / 16')
         await page.unroute('**/palo-alto-2026/02.webp', fail)
         await page.locator('#next').click()
-        await expect(page.locator('#count')).to_have_text('02 / 15')
+        await expect(page.locator('#count')).to_have_text('02 / 16')
         await expect(page.locator('#photo-status')).to_be_empty()
         await page.close()
 
