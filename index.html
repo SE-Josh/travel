@@ -53,6 +53,7 @@ main { width: min(1120px, 100%); min-height: 0; min-width: 0; justify-self: cent
 .album-year { flex-shrink: 0; color: var(--muted); font-size: 11px; }
 .status { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; text-align: center; color: var(--muted); font-size: 13px; line-height: 1.7; }
 .status:empty { display: none; }
+.viewer .status { pointer-events: none; }
 .viewer { height: 100%; min-height: 0; position: relative; padding: 0 44px; touch-action: pan-y pinch-zoom; }
 .viewer img { display: block; width: 100%; height: 100%; object-fit: contain; user-select: none; -webkit-user-drag: none; opacity: 1; transition: opacity .2s; }
 .viewer img.changing { opacity: 0; }
@@ -100,6 +101,7 @@ footer { height: 64px; display: flex; align-items: center; justify-content: cent
   <section class="viewer hidden" id="viewer" aria-label="Photo viewer">
     <button class="nav prev" id="prev" type="button" aria-label="Previous photo">‹</button>
     <img id="photo" alt="" draggable="false">
+    <p id="photo-status" class="status" role="status"></p>
     <button class="nav next" id="next" type="button" aria-label="Next photo">›</button>
   </section>
 </main>
@@ -115,7 +117,8 @@ footer { height: 64px; display: flex; align-items: center; justify-content: cent
 const albumPage = document.getElementById('album-page');
 const viewer = document.getElementById('viewer');
 const grid = document.getElementById('album-grid');
-const photo = document.getElementById('photo');
+let photo = document.getElementById('photo');
+const photoStatus = document.getElementById('photo-status');
 const count = document.getElementById('count');
 const back = document.getElementById('back');
 const brand = document.getElementById('brand');
@@ -129,7 +132,8 @@ const pagePrev = document.getElementById('page-prev');
 const pageNext = document.getElementById('page-next');
 const pageCount = document.getElementById('page-count');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-let albums = [], currentAlbum = null, index = 0, timer = null, requestId = 0;
+let albums = [], currentAlbum = null, index = 0, requestId = 0;
+let neighborPhotos = [];
 let order = 'desc', page = 0, pageSize = 6, returnAlbumId = null;
 const pad = value => String(value).padStart(2, '0');
 function albumCity(album) {
@@ -210,15 +214,53 @@ function changePage(step) {
   if (focusWasCard) grid.firstElementChild?.focus({preventScroll: true});
   else if (focused?.disabled) (step > 0 ? pagePrev : pageNext).focus({preventScroll: true});
 }
-function updatePhoto() {
+async function updatePhoto(animate = false) {
   if (!currentAlbum) return;
-  photo.src = currentAlbum.photos[index]; photo.alt = albumLabel(currentAlbum) + ' photo ' + (index + 1);
-  count.textContent = pad(index + 1) + ' / ' + pad(currentAlbum.photos.length);
-  prev.disabled = next.disabled = currentAlbum.photos.length < 2;
+  const album = currentAlbum, target = index, id = ++requestId;
+  const nextPhoto = new Image();
+  nextPhoto.id = 'photo'; nextPhoto.draggable = false;
+  nextPhoto.alt = albumLabel(album) + ' photo ' + (target + 1);
+  nextPhoto.dataset.index = target;
+  photoStatus.textContent = '';
+  viewer.setAttribute('aria-busy', 'true');
+  prev.disabled = next.disabled = album.photos.length < 2;
+  try {
+    nextPhoto.src = album.photos[target];
+    // Keep the current image visible until the replacement can actually be painted.
+    await nextPhoto.decode();
+    if (id !== requestId) return;
+    const fade = animate && !reduced.matches && photo.hasAttribute('src');
+    if (fade) {
+      photo.classList.add('changing');
+      await new Promise(resolve => setTimeout(resolve, 200));
+      if (id !== requestId) return;
+      nextPhoto.classList.add('changing');
+    }
+    photo.replaceWith(nextPhoto); photo = nextPhoto;
+    count.textContent = pad(target + 1) + ' / ' + pad(album.photos.length);
+    viewer.setAttribute('aria-busy', 'false');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (id === requestId) photo.classList.remove('changing');
+    }));
+    // Retain only the two adjacent preloads, rather than decoding the whole album.
+    neighborPhotos = [-1, 1].map(step => {
+      const image = new Image();
+      image.src = album.photos[(target + step + album.photos.length) % album.photos.length];
+      return image;
+    });
+  } catch (error) {
+    if (id !== requestId) return;
+    index = Number(photo.dataset.index || 0);
+    photo.classList.remove('changing');
+    viewer.setAttribute('aria-busy', 'false');
+    photoStatus.textContent = 'Could not load photo. Please try again.';
+    console.error(error);
+  }
 }
 function openAlbum(id, updateHash = true) {
   const album = albums.find(a => a.id === id); if (!album) return;
-  clearTimeout(timer); requestId++; currentAlbum = album; returnAlbumId = id; index = 0;
+  requestId++; currentAlbum = album; returnAlbumId = id; index = 0;
+  photo.removeAttribute('src'); photo.alt = ''; photo.dataset.index = '0'; count.textContent = '';
   page = Math.floor(sortedAlbums().findIndex(a => a.id === id) / pageSize);
   photo.classList.remove('changing'); updatePhoto();
   albumPage.classList.add('hidden'); viewer.classList.remove('hidden');
@@ -229,7 +271,8 @@ function openAlbum(id, updateHash = true) {
   if (updateHash) history.pushState(null, '', '#' + encodeURIComponent(id));
 }
 function goBack(updateHash = true) {
-  clearTimeout(timer); requestId++; currentAlbum = null;
+  requestId++; currentAlbum = null; neighborPhotos = [];
+  photoStatus.textContent = ''; viewer.setAttribute('aria-busy', 'false');
   viewer.classList.add('hidden'); albumPage.classList.remove('hidden');
   brand.classList.remove('hidden'); sort.classList.remove('hidden'); pagination.classList.remove('hidden');
   back.classList.add('hidden'); albumTitle.classList.add('hidden'); count.classList.add('hidden');
@@ -242,15 +285,9 @@ function goBack(updateHash = true) {
 }
 function move(step) {
   if (!currentAlbum || currentAlbum.photos.length < 2) return;
-  clearTimeout(timer); const id = ++requestId;
   index = (index + step + currentAlbum.photos.length) % currentAlbum.photos.length;
-  if (reduced.matches) { photo.classList.remove('changing'); updatePhoto(); return; }
-  photo.classList.add('changing');
-  timer = setTimeout(() => {
-    if (id !== requestId || !currentAlbum) return;
-    updatePhoto();
-    requestAnimationFrame(() => requestAnimationFrame(() => { if (id === requestId) photo.classList.remove('changing'); }));
-  }, 160);
+  photo.classList.remove('changing');
+  updatePhoto(true);
 }
 function syncHash() {
   let id;
